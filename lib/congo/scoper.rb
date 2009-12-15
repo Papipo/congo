@@ -62,8 +62,7 @@ module Congo
       def method_missing(method, *args)
         if ctype = content_type_as_const(method.to_s.classify)
           meta = proxy_scoper? ? scoper_instance.metaclass : metaclass
-          meta.many method
-          meta.associations[method].instance_variable_set("@klass", ctype)  # ugly hack until jnunemaker merges my changes          
+          meta.many method, :class => ctype
           (proxy_scoper? ? scoper_instance : self).send(method, *args)
         else
           super
