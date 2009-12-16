@@ -25,6 +25,7 @@ describe 'Scoper' do
     account.content_types.should be_empty
   end
   
+  ## Create content types ##
   it 'should create a content type and use it straight from an AR object' do 
     website = Website.new(42, 'My simple website')
     
@@ -45,6 +46,22 @@ describe 'Scoper' do
     account.projects.count.should == 0
   end
   
+  ## Content type validation (own file ?) ##
+  it 'should not create a content type if it does not have a name' do
+    account = Account.create(:email => 'layne_stanley@acme.org')    
+    lambda {
+      account.content_types.create(:keys => [ { :name => 'Title' } ])
+    }.should_not change(Congo::ContentType, :count).by(1)
+  end
+  
+  it 'should not create a content type if it does not have keys' do
+    account = Account.create(:email => 'layne_stanley@acme.org')    
+    lambda {
+      account.content_types.create(:name => 'Project')
+    }.should_not change(Congo::ContentType, :count).by(1)
+  end
+    
+  ## Associations: add items, ...etc ##
   it 'should add items into an association' do
     account = Account.create(:email => 'layne_stanley@acme.org')
     create_project_type(account)

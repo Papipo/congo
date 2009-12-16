@@ -2,18 +2,26 @@ module Congo
   class ContentType
     include MongoMapper::Document
   
+    ## keys
     key :embedded, Boolean, :default => false
-    many :keys, :class_name => 'Congo::Key'
-    many :validations, :class_name => 'Congo::Validation'
-    many :associations, :class_name => 'Congo::Association'
- 
+    key :name, String
     key :scope_type, String
     key :scope_id, ObjectId
     
+    ## associations
+    many :keys, :class_name => 'Congo::Key'
+    many :validations, :class_name => 'Congo::Validation'
+    many :associations, :class_name => 'Congo::Association'
     belongs_to :scope, :polymorphic => true
     
-    validates_presence_of :scope
+    ## validations 
+    validates_presence_of :name, :scope
+    validates_true_for :keys,
+      :logic => lambda { !keys.empty? },
+      :message => 'need keys'
   
+    ## methods 
+    
     def to_const
       klass = Class.new
       if self.embedded?
@@ -28,6 +36,7 @@ module Congo
     end
   
     private
+    
     def set_collection_name(klass)
       klass.set_collection_name "#{scope_type}_#{scope_id}_#{name.tableize}" # maybe just name.tableize is enough
     end
