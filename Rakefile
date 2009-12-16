@@ -9,8 +9,9 @@ begin
     gem.description = %Q{TODO: longer description of your gem}
     gem.email = "papipo@gmail.com"
     gem.homepage = "http://github.com/Papipo/congo"
-    gem.authors = ["Rodrigo Alvarez"]
+    gem.authors = ["Rodrigo Alvarez", "Didier Lafforgue"]
     gem.add_development_dependency "rspec", ">= 1.2.9"
+    gem.add_development_dependency "mongo_mapper", ">= 0.6.7"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
