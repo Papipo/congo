@@ -52,7 +52,7 @@ module Congo
         return name.constantize if Object.const_defined?(name)
         
         unless consts[name]
-          consts[name] = content_types.find_by_name(name).to_const # This doesn't work because of different instances being used
+          consts[name] = content_types.find_by_name(name).to_const rescue nil # This doesn't work because of different instances being used
         end
         consts[name]
       end

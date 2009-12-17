@@ -8,6 +8,13 @@ class Website
     self.id, self.title = id, title
   end
   
+  def method_missing(method, *args)
+    if method.to_s == 'foo'
+      "Hello foo !" 
+    else
+      super
+    end
+  end
 end
 
 class Account 

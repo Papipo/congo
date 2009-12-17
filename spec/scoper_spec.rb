@@ -25,6 +25,14 @@ describe 'Scoper' do
     account.content_types.should be_empty
   end
   
+  it 'should not break method_missing stuff from the scoper' do
+    website = Website.new(42, 'My simple website')
+    website.foo.should == 'Hello foo !'
+    lambda {
+      website.bar
+    }.should raise_error
+  end
+  
   ## Create content types ##
   it 'should create a content type and use it straight from an AR object' do 
     website = Website.new(42, 'My simple website')
@@ -50,14 +58,16 @@ describe 'Scoper' do
   it 'should not create a content type if it does not have a name' do
     account = Account.create(:email => 'layne_stanley@acme.org')    
     lambda {
-      account.content_types.create(:keys => [ { :name => 'Title' } ])
+      content_type = account.content_types.create(:keys => [ { :name => 'Title' } ])
+      content_type.errors.on(:name).should_not be_nil
     }.should_not change(Congo::ContentType, :count).by(1)
   end
   
   it 'should not create a content type if it does not have keys' do
     account = Account.create(:email => 'layne_stanley@acme.org')    
     lambda {
-      account.content_types.create(:name => 'Project')
+      content_type = account.content_types.create(:name => 'Project')
+      content_type.errors.on(:keys).should_not be_nil
     }.should_not change(Congo::ContentType, :count).by(1)
   end
     

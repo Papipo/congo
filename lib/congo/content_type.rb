@@ -5,6 +5,7 @@ module Congo
     ## keys
     key :embedded, Boolean, :default => false
     key :name, String
+    key :description, String
     key :scope_type, String
     key :scope_id, ObjectId
     
