@@ -2,11 +2,17 @@ module Congo
   class Key
     include MongoMapper::EmbeddedDocument
   
-    key :name, String
-    key :type, String, :default => 'String'
-  
-    validates_presence_of :name, :type
-  
+    ## keys
+    key :name, String, :required => true
+    key :label, String
+    key :type, String, :default => 'String', :required => true
+    
+    ## validation
+    before_validation do
+      # FIXME: find something more robust to convert label to name
+      self.name = self.label.underscore.gsub(' ', '_') if self.name.blank? && self.label
+    end
+    
     def apply(klass, scope)
       klass.key name.to_sym, scope.content_type_as_const(type)
     end
