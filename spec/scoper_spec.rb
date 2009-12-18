@@ -2,16 +2,23 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe 'Scoper' do
   
+  before(:each) do
+    Congo::ProxyScoper.destroy_all
+    Congo::ContentType.destroy_all
+  end
+  
   it 'should be used inside any AR models' do
+    
     website = Website.new(42, 'My simple website')
     website.id.should == 42
     lambda {
-      website.content_types.should be_empty
-      website.content_types.should be_empty
+      3.times do 
+        website.content_types.should be_empty
+      end
     }.should change(Congo::ProxyScoper, :count).by(1)
     
     proxy = Congo::ProxyScoper.first
-    proxy.ext_id.should == '42'
+    proxy.ext_id.should == 42
     proxy.ext_type.should == 'Website'
     
     another = Website.new(43, 'Another simple website')
@@ -40,6 +47,8 @@ describe 'Scoper' do
     lambda {
       create_blog_post_type(website)
     }.should change(Congo::ContentType, :count).by(1)
+    
+    website.content_types.should_not be_empty
     
     website.blog_posts.count.should == 0
   end

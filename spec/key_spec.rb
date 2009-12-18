@@ -24,4 +24,10 @@ describe 'Key' do
     key.type.should == "String"
   end
   
+  it 'should have a valid name' do
+    key = Congo::Key.new(:name => 'Title')
+    key.should be_valid
+    key.name.should == "title"
+  end
+  
 end

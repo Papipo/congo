@@ -5,8 +5,14 @@ module Congo
 
     acts_as_congo_scoper
     
+    ## keys
     key :ext_type, String
-    key :ext_id, String
+    key :ext_id, Integer
+    
+    ## validations
+    validates_true_for :ext,
+      :logic => lambda { Congo::ProxyScoper.find_by_ext_id_and_ext_type(ext_id, ext_type).nil? },
+      :message => 'is not unique'
     
   end
 end

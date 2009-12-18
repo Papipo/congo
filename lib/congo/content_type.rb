@@ -10,16 +10,16 @@ module Congo
     key :scope_id, ObjectId
     
     ## associations
+    belongs_to :scope, :polymorphic => true
     many :keys, :class_name => 'Congo::Key'
     many :validations, :class_name => 'Congo::Validation'
     many :associations, :class_name => 'Congo::Association'
-    belongs_to :scope, :polymorphic => true
     
     ## validations 
     validates_presence_of :name, :scope
     validates_true_for :keys,
-      :logic => lambda { !keys.empty? },
-      :message => 'need keys'
+      :logic => :validate_keys,
+      :message => 'invalid keys'
   
     ## methods 
     
@@ -37,6 +37,23 @@ module Congo
     end
   
     private
+    
+    def validate_keys
+      if !keys.empty?
+        # keys should be valid and unique 
+        found_errors, duplicates = false, {}
+        keys.each do |key|
+          found_errors ||= !key.valid?
+          if duplicates.key?(key.name)
+            key.errors.add(:name, 'should be unique')
+            found_errors = true
+          else
+            duplicates[key.name] = key
+          end
+        end
+        !found_errors
+      end
+    end
     
     def set_collection_name(klass)
       klass.set_collection_name "#{scope_type}_#{scope_id}_#{name.tableize}" # maybe just name.tableize is enough
