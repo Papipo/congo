@@ -48,11 +48,14 @@ module Congo
         @consts ||= {}
       end
             
-      def content_type_as_const(name)
+      def content_type_as_const(name, method_name = nil)
         return name.constantize if Object.const_defined?(name)
         
         unless consts[name]
-          consts[name] = content_types.find_by_name(name).to_const rescue nil # This doesn't work because of different instances being used
+          if (type = content_types.find_by_name(name)).nil?
+            type = content_types.find_by_slug(method_name) if method_name
+          end
+          consts[name] = type.to_const rescue nil # This doesn't work because of different instances being used
         end
         consts[name]
       end
@@ -60,7 +63,7 @@ module Congo
       private
       
       def method_missing(method, *args)
-        if ctype = content_type_as_const(method.to_s.classify)
+        if ctype = content_type_as_const(method.to_s.classify, method.to_s)
           meta = proxy_scoper? ? scoper_instance.metaclass : metaclass
           meta.many method, :class => ctype
           (proxy_scoper? ? scoper_instance : self).send(method, *args)
