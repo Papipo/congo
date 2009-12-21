@@ -57,6 +57,7 @@ module Congo
           end
           consts[name] = type.to_const rescue nil # This doesn't work because of different instances being used
         end
+        
         consts[name]
       end
       

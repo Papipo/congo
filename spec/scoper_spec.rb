@@ -82,8 +82,8 @@ describe 'Scoper' do
     }.should_not change(Congo::ContentType, :count).by(1)
   end
     
-  ## Associations: add items, ...etc ##
-  it 'should add items into an association' do
+  ## Collections: add items, ...etc ##
+  it 'should add items into a collection' do
     account = Account.create(:email => 'layne_stanley@acme.org')
     create_project_type(account)
     

@@ -3,8 +3,11 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe 'ContentType' do
   
   before(:each) do
+    Account.destroy_all
     Congo::ProxyScoper.destroy_all
     Congo::ContentType.destroy_all
+    
+    @account = Account.create(:email => 'layne_stanley@acme.org')
   end
   
   it 'should be valid' do
@@ -47,7 +50,8 @@ describe 'ContentType' do
   end
   
   it 'should not be valid without a scope' do
-    type = build_content_type(:scope => nil)
+    type = build_content_type
+    type.scope = nil
     type.should_not be_valid
     type.errors.on(:scope).should_not be_nil
   end
@@ -71,7 +75,7 @@ describe 'ContentType' do
     type.nested_keys.size.should == 2
     Congo::ContentType.first.nested_keys.size.should == 2    
   end
-  
+      
   def build_content_type(options = {})
     default_options = {
       :name => 'Project', 
@@ -79,10 +83,9 @@ describe 'ContentType' do
       :nested_keys => [
         { :name => 'name' },
         { :name => 'description' }
-      ],
-      :scope => Congo::ProxyScoper.new } 
-      
-    Congo::ContentType.new(default_options.merge(options))
+      ] } 
+    
+    @account.content_types.build(default_options.merge(options))
   end
   
 end

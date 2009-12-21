@@ -1,6 +1,7 @@
 module Congo
   class ContentType
     include MongoMapper::Document
+    include Migration
   
     ## keys
     key :embedded, Boolean, :default => false
@@ -20,14 +21,10 @@ module Congo
     ## validations 
     validates_format_of :name, :with => /^[a-zA-Z][\w\s]*$/
     validates_presence_of :scope
-    validates_true_for :nested_keys,
-      :logic => :validate_nested_keys,
-      :message => 'invalid keys'
-    validates_true_for :collection_name,
-      :logic => lambda { name.present? },
-      :message => 'is required'
+    validates_true_for :nested_keys, :logic => :validate_nested_keys, :message => 'invalid keys'
+    validates_true_for :collection_name, :logic => lambda { name.present? }, :message => 'is required'
+    # TODO: name must be unique !
     
-
     ## callbacks
     before_validation :make_names_clean
   
@@ -43,27 +40,9 @@ module Congo
         apply_scope(klass)
       end
       apply_metadata(klass)
+      apply_migration(klass)
       klass
     end
-    
-    # def nested_keys_attributes=(attributes_collection = [])
-    #   attributes_collection.each do |attributes|
-    #     attributes = attributes.with_indifferent_access
-    # 
-    #     if attributes['_id'].blank?
-    #       unless %w(1 true).include?(attributes['_destroy']) || attributes['_destroy'] == true
-    #         puts "nested key created !!!"
-    #         nested_keys.build(attributes.except(%w( id _destroy _id )))
-    #       end
-    #     elsif existing_record = nested_keys.detect { |record| record._id.to_s == attributes['_id'].to_s }
-    #       if %w(1 true).include?(attributes['_destroy']) || attributes['_destroy'] == true          
-    #         existing_record.mark_for_destruction = true
-    #       else
-    #         existing_record.attributes = attributes.except(%w( id _destroy _id ))
-    #       end
-    #     end
-    #   end
-    # end
   
     private
     
@@ -102,13 +81,13 @@ module Congo
       klass.belongs_to scope_type.downcase
       klass.validates_presence_of scope_type.downcase
     end
-      
+          
     def apply_metadata(klass)
       %w[nested_keys nested_associations nested_validations].each do |association|
         self.send(association).each { |meta| meta.apply(klass, scope) }
       end
     end
-    
+        
     def slugify_name(name)
       # replace accented chars with ther ascii equivalents
       s = ActiveSupport::Inflector.transliterate(name).to_s

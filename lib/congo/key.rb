@@ -18,5 +18,14 @@ module Congo
       klass.key name.to_sym, scope.content_type_as_const(type)
     end
 
+    def name=(value)
+      @previous_name = self.name
+      super
+    end
+    
+    def name_changed?
+      @previous_name != self.name
+    end
+
   end
 end
