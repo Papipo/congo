@@ -87,8 +87,22 @@ describe 'Scoper' do
     account = Account.create(:email => 'layne_stanley@acme.org')
     create_project_type(account)
     
-    account.projects.create!(:name => 'Congo', :description => 'bla bla')
+    project = account.projects.build(:name => 'Congo', :description => 'bla bla')
+    project.save
+    project.respond_to?(:created_at).should == true
+    project.respond_to?(:updated_at).should == true
     account.projects.count.should == 1
+    
+    account.send(:projects).create(:name => 'CongoCMS', :description => 'bla bla')
+    account.projects.count.should == 2
+  end
+  
+  it 'should add items into a collection thru the ProxyScoper' do
+    website = Website.new(42, 'My simple website')
+    create_blog_post_type(website)
+    
+    website.blog_posts.create(:title => 'Hello world', :body => 'bla bla')
+    website.blog_posts.count.should == 1
   end
   
   def create_blog_post_type(website)

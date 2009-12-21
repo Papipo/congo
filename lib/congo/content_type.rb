@@ -36,6 +36,7 @@ module Congo
         klass.send(:include, MongoMapper::EmbeddedDocument)
       else
         klass.send(:include, MongoMapper::Document)
+        klass.timestamps!
         set_collection_name(klass)
         apply_scope(klass)
       end
@@ -77,9 +78,12 @@ module Congo
     end
   
     def apply_scope(klass)
-      klass.key scope_type.foreign_key, ObjectId
-      klass.belongs_to scope_type.downcase
-      klass.validates_presence_of scope_type.downcase
+      foreign_key = scope_type.underscore.gsub('/', '_').foreign_key
+      association_name = scope_type.demodulize.underscore
+      
+      klass.key foreign_key, ObjectId
+      klass.belongs_to association_name, :class_name => scope_type, :foreign_key => foreign_key
+      klass.validates_presence_of association_name
     end
           
     def apply_metadata(klass)

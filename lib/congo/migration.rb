@@ -50,10 +50,10 @@ module Congo
         
         migrations.each do |migration|
           if doc['version'] < migration.version            
-            logger.debug "running migration #{migration.version} / #{migration.inspect}"
+            # logger.debug "running migration #{migration.version} / #{migration.inspect}"
             
             migration.tasks.each do |task|
-              logger.debug "...running task #{task['action']}"
+              # logger.debug "...running task #{task['action']}"
               case task['action'].to_sym
                 when :rename
                   doc[task['next']] = doc[task['previous']]
@@ -66,7 +66,7 @@ module Congo
               end
             end
             doc['version'] = migration.version
-            logger.debug "finishing migration (#{content.version}) / #{doc.inspect}"
+            # logger.debug "finishing migration (#{content.version}) / #{doc.inspect}"
           end
         end
         content.class.collection.save(doc)
@@ -98,7 +98,7 @@ module Congo
         unless migration.empty?
           self.version += 1
           self.migrations << migration
-          logger.debug "incrementing version #{self.version}"
+          # logger.debug "incrementing version #{self.version}"
         end
       end
       

@@ -75,7 +75,7 @@ describe 'ContentType' do
     type.nested_keys.size.should == 2
     Congo::ContentType.first.nested_keys.size.should == 2    
   end
-      
+        
   def build_content_type(options = {})
     default_options = {
       :name => 'Project', 
