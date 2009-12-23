@@ -11,7 +11,7 @@ describe 'ContentType' do
     @content_type = @account.content_types.create!({
       :name => 'Project', 
       :embedded => false,
-      :nested_keys => [
+      :metadata_keys => [
         { :name => 'name' },
         { :name => 'description' },
         { :name => 'date' }
@@ -33,9 +33,9 @@ describe 'ContentType' do
     type.migrations.should be_empty
     
     type = Congo::ContentType.first
-    new_nested_keys = [type.nested_keys.pop, Congo::Key.new({ :name => 'date' }), type.nested_keys.pop]
-    new_nested_keys.last.name = 'title'
-    type.nested_keys = new_nested_keys
+    new_metadata_keys = [type.metadata_keys.pop, Congo::Metadata::Key.new({ :name => 'date' }), type.metadata_keys.pop]
+    new_metadata_keys.last.name = 'title'
+    type.metadata_keys = new_metadata_keys
     type.save
     type.version.should == 0
     type.migrations.should be_empty
@@ -48,9 +48,9 @@ describe 'ContentType' do
     type.migrations.should be_empty
     
     type = @account.content_types.all[1]
-    new_nested_keys = [type.nested_keys.pop, Congo::Key.new({ :name => 'date' })]
-    new_nested_keys.first.name = 'a_description'
-    type.nested_keys = new_nested_keys
+    new_metadata_keys = [type.metadata_keys.pop, Congo::Metadata::Key.new({ :name => 'date' })]
+    new_metadata_keys.first.name = 'a_description'
+    type.metadata_keys = new_metadata_keys
     type.save
     type.version.should == 1
     type.migrations.size.should == 1
@@ -63,8 +63,8 @@ describe 'ContentType' do
     type.migrations.first.tasks[1][:previous].should == 'name'
     
     type = @account.content_types.all[1]
-    new_nested_keys = [type.nested_keys.pop]
-    type.nested_keys = new_nested_keys
+    new_metadata_keys = [type.metadata_keys.pop]
+    type.metadata_keys = new_metadata_keys
     type.save
     type.version.should == 2
     type.migrations.size.should == 2
@@ -76,9 +76,9 @@ describe 'ContentType' do
     project = @account.projects.create(:name => 'Project #1', :description => 'bla bla', :date => '10/09/2009')
   
     # renaming and droppping keys
-    new_keys = [@content_type.nested_keys.first, @content_type.nested_keys[1]]
+    new_keys = [@content_type.metadata_keys.first, @content_type.metadata_keys[1]]
     new_keys.first.name = 'title'
-    @content_type.nested_keys = new_keys
+    @content_type.metadata_keys = new_keys
     @content_type.save
   
     @account = Account.first # we need a hard refresh :-)    
@@ -96,16 +96,16 @@ describe 'ContentType' do
   it 'should run 2 pending migrations' do
     project = @account.projects.create(:name => 'Project #1', :description => 'bla bla', :date => '10/09/2009')
     
-    new_keys = [@content_type.nested_keys.first, @content_type.nested_keys[1]]
+    new_keys = [@content_type.metadata_keys.first, @content_type.metadata_keys[1]]
     new_keys.first.name = 'title'
-    @content_type.nested_keys = new_keys
+    @content_type.metadata_keys = new_keys
     @content_type.save
     
     @content_type = @content_type.reload # necessary
     
-    new_keys = [@content_type.nested_keys.first]
+    new_keys = [@content_type.metadata_keys.first]
     new_keys.first.name = 'name'
-    @content_type.nested_keys = new_keys
+    @content_type.metadata_keys = new_keys
     @content_type.save
     
     @account = Account.first # we need a hard refresh :-)    
@@ -122,7 +122,7 @@ describe 'ContentType' do
     default_options = {
       :name => 'Task', 
       :embedded => false,
-      :nested_keys => [
+      :metadata_keys => [
         { :name => 'name' },
         { :name => 'description' }
       ] } 

@@ -60,7 +60,7 @@ describe 'ContentType' do
     type.should_not be_valid
     type.errors.on(:name).should_not be_nil
     
-    type = @website.content_types.build(:name => 'Page', :nested_keys => [{ :name => 'title' }])
+    type = @website.content_types.build(:name => 'Page', :metadata_keys => [{ :name => 'title' }])
     type.should_not be_valid
     type.errors.on(:name).should_not be_nil
     
@@ -84,9 +84,9 @@ describe 'ContentType' do
   end
   
   it 'should not valid without keys' do
-    type = build_content_type(:nested_keys => [])
+    type = build_content_type(:metadata_keys => [])
     type.should_not be_valid
-    type.errors.on(:nested_keys).should_not be_nil
+    type.errors.on(:metadata_keys).should_not be_nil
   end
   
   it 'should not be valid without a scope' do
@@ -97,30 +97,30 @@ describe 'ContentType' do
   end
   
   it 'should not be valid with 2 identical keys (same name)' do
-    type = build_content_type(:nested_keys => [ { :name => 'name' }, { :name => 'name' }, { :name => 'description' } ])
+    type = build_content_type(:metadata_keys => [ { :name => 'name' }, { :name => 'name' }, { :name => 'description' } ])
     type.should_not be_valid
-    type.errors.on(:nested_keys).should_not be_nil
-    type.nested_keys.first.should be_valid
-    type.nested_keys.last.should be_valid
-    type.nested_keys[1].errors.on(:name).should_not be_nil
+    type.errors.on(:metadata_keys).should_not be_nil
+    type.metadata_keys.first.should be_valid
+    type.metadata_keys.last.should be_valid
+    type.metadata_keys[1].errors.on(:name).should_not be_nil
   end
   
   it 'should be retrieved once saved' do
     type = build_content_type
-    type.nested_keys.should_not be_empty
+    type.metadata_keys.should_not be_empty
     type.save!.should be_true
     type.save
     
     type = type.reload
-    type.nested_keys.size.should == 2
-    Congo::ContentType.first.nested_keys.size.should == 2
+    type.metadata_keys.size.should == 2
+    Congo::ContentType.first.metadata_keys.size.should == 2
   end
         
   def build_content_type(options = {})
     default_options = {
       :name => 'Project', 
       :embedded => false,
-      :nested_keys => [
+      :metadata_keys => [
         { :name => 'name' },
         { :name => 'description' }
       ] } 

@@ -76,14 +76,14 @@ module Congo
       def increment_version_and_build_migration
         return if self.to_const.count == 0
 
-        current_ids = nested_keys.collect { |k| k['_id'] }.compact
-        previous_ids = nested_keys.previous.collect { |k| k['_id'] }.compact
+        current_ids = metadata_keys.collect { |k| k['_id'] }.compact
+        previous_ids = metadata_keys.previous.collect { |k| k['_id'] }.compact
 
         migration = Migration.new(:version => self.version + 1, :tasks => [])
 
         # renamed keys ?
         (previous_ids & current_ids).each do |key_id|
-          current, previous = nested_keys.find(key_id), nested_keys.previous.detect { |k| k['_id'] == key_id }
+          current, previous = metadata_keys.find(key_id), metadata_keys.previous.detect { |k| k['_id'] == key_id }
           if previous['name'] != current['name']
             migration.tasks << { :action => 'rename', :previous => previous['name'], :next => current['name'] }
           end
@@ -91,7 +91,7 @@ module Congo
 
         # dropped keys ?
         (previous_ids - current_ids).each do |key_id|
-          previous = nested_keys.previous.detect { |k| k['_id'] == key_id }
+          previous = metadata_keys.previous.detect { |k| k['_id'] == key_id }
           migration.tasks << { :action => 'drop', :previous => previous['name'] }
         end
 
