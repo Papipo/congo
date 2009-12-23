@@ -8,6 +8,7 @@ describe 'ContentType' do
     Congo::ContentType.destroy_all
     
     @account = Account.create(:email => 'layne_stanley@acme.org')
+    @website = Website.new(42, 'My simple website')
   end
   
   it 'should be valid' do
@@ -36,11 +37,50 @@ describe 'ContentType' do
     end
   end
   
-  it 'should be valid without a name if collection name is provided' do
+  it 'should be valid without a name but with a provided collection name' do
     type = build_content_type(:name => nil, :collection_name => 'My projects')
     type.should be_valid
     type.name.should == "MyProject"
     type.slug.should == "my_projects"
+  end
+  
+  it 'should not valid if another content type with the same name' do
+    type_1 = build_content_type
+    type_1.save.should be_true
+    
+    type_2 = build_content_type
+    type_2.should_not be_valid
+    type_2.errors.on(:name).should_not be_nil
+    type_2.name = 'Team'
+    type_2.should be_valid
+  end
+  
+  it 'should not valid if the scoper instance already has a method identical to its name' do
+    type = build_content_type(:name => 'Person')
+    type.should_not be_valid
+    type.errors.on(:name).should_not be_nil
+    
+    type = @website.content_types.build(:name => 'Page', :nested_keys => [{ :name => 'title' }])
+    type.should_not be_valid
+    type.errors.on(:name).should_not be_nil
+    
+    type.name = nil
+    type.collection_name = 'pages'
+    type.should_not be_valid
+    type.errors.on(:collection_name).should_not be_nil
+  end
+  
+  it 'should not valid if another content type with the same collection name' do
+    type_1 = build_content_type(:name => nil, :collection_name => 'My projects')
+    type_1.save.should be_true
+    
+    type_2 = build_content_type(:name => nil, :collection_name => 'My projects')
+    type_2.should_not be_valid
+    type_2.errors.on(:name).should_not be_nil
+    type_2.errors.on(:collection_name).should_not be_nil
+    type_2.name = nil
+    type_2.collection_name = 'My team'
+    type_2.should be_valid
   end
   
   it 'should not valid without keys' do
@@ -69,11 +109,11 @@ describe 'ContentType' do
     type = build_content_type
     type.nested_keys.should_not be_empty
     type.save!.should be_true
-    type.save!
+    type.save
     
     type = type.reload
     type.nested_keys.size.should == 2
-    Congo::ContentType.first.nested_keys.size.should == 2    
+    Congo::ContentType.first.nested_keys.size.should == 2
   end
         
   def build_content_type(options = {})

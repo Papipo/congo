@@ -43,7 +43,7 @@ describe 'ContentType' do
   
   it 'should create incremented migration once it has been updated AND there is at least one document in the collection' do
     (type = build_content_type).save
-    @account.projects.create(:name => 'foo', :description => 'bla bla')
+    @account.tasks.create(:name => 'foo', :description => 'bla bla')
     type.version.should == 0
     type.migrations.should be_empty
     
@@ -120,7 +120,7 @@ describe 'ContentType' do
   
   def build_content_type(options = {})
     default_options = {
-      :name => 'Project', 
+      :name => 'Task', 
       :embedded => false,
       :nested_keys => [
         { :name => 'name' },

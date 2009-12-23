@@ -14,7 +14,7 @@ module Congo
             def scoper_instance
               @proxy_scoper ||= Congo::ProxyScoper.find_by_ext_id_and_ext_type(self.id, self.class.name)
               if @proxy_scoper.nil?
-                @proxy_scoper = Congo::ProxyScoper.create!(:ext_type => self.class.name, :ext_id => self.id)
+                @proxy_scoper = Congo::ProxyScoper.create!(:ext_type => self.class.name, :ext_id => self.id)                
               end
               @proxy_scoper
             end

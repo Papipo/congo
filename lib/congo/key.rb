@@ -3,9 +3,13 @@ module Congo
     include MongoMapper::EmbeddedDocument
   
     ## keys
-    key :name, String, :required => true
+    key :name, String
     key :label, String
-    key :type, String, :default => 'String', :required => true
+    key :type, String, :default => 'String'
+    
+    ## validations
+    validates_presence_of :name, :type, 
+      :message => lambda { I18n.t('congo.errors.messages.empty') }
     
     ## callbacks
     before_validation do

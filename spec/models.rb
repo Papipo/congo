@@ -8,6 +8,10 @@ class Website
     self.id, self.title = id, title
   end
   
+  def pages
+    []
+  end
+  
   def method_missing(method, *args)
     if method.to_s == 'foo'
       "Hello foo !" 
@@ -24,5 +28,9 @@ class Account
   acts_as_congo_scoper
   
   key :email, String
+  
+  def people
+    []
+  end
   
 end

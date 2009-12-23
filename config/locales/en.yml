@@ -1,0 +1,8 @@
+congo:
+  errors:
+    messages:
+      invalid_keys: "are not valid"
+      invalid: "is invalid"
+      empty: "can't be empty"
+      taken: "has already been taken"
+      exclusion: "is reserved"

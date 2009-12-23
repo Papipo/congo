@@ -12,7 +12,7 @@ module Congo
     ## validations
     validates_true_for :ext,
       :logic => lambda { Congo::ProxyScoper.find_by_ext_id_and_ext_type(ext_id, ext_type).nil? },
-      :message => 'is not unique'
+      :message => lambda { I18n.t('congo.errors.messages.taken') }
     
   end
 end
