@@ -1,8 +1,9 @@
-congo:
-  errors:
-    messages:
-      invalid_keys: "ne sont pas valides"
-      invalid: "n'est pas valide"
-      empty: "doit être rempli(e)"
-      taken: "n'est pas disponible"
-      exclusion: "n'est pas disponible"
+fr:
+  congo:
+    errors:
+      messages:
+        invalid_keys: "ne sont pas valides"
+        invalid: "n'est pas valide"
+        empty: "doit être rempli(e)"
+        taken: "n'est pas disponible"
+        exclusion: "n'est pas disponible"
