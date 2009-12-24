@@ -43,4 +43,34 @@ describe 'Key' do
     key.name_changed?.should be_false
   end
   
+  describe "when applied" do
+    after do
+      @key.apply(@base, @scope)
+    end
+    
+    before do
+      @base  = mock('Base class')
+      @scope = mock('Scope')
+      @const = Class.new(String)
+      @scope.stubs(:content_type_as_const).with('Key').returns(@const)
+      @key = Congo::Metadata::Key.new(:name => 'mykey', :type => 'Key')
+    end
+    
+    it "should create the key in the base class" do
+      @base.expects(:key).with(:mykey, @const)
+    end
+    
+    describe "with validations" do
+      before do
+        @const.send(:include, Validatable)
+        @const.send(:validates_format_of, :to_s, :with => /[0-9]+/)
+        @scope.stubs(:content_type_as_const).with('Key').returns(@const)
+        @base.stubs(:key).with(:mykey, @const)
+      end
+      
+      it "should use include_errors_from in the base class" do
+        @base.expects(:include_errors_from).with(:mykey)
+      end
+    end
+  end
 end

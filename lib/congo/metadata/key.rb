@@ -20,7 +20,9 @@ module Congo
       end
         
       def apply(klass, scope)
-        klass.key name.to_sym, scope.content_type_as_const(type)
+        ctype = scope.content_type_as_const(type)
+        klass.key name.to_sym, ctype
+        klass.include_errors_from name.to_sym if ctype.instance_methods.include?('valid?')
       end
 
       def name=(value)
