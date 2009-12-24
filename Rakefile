@@ -20,10 +20,6 @@ rescue LoadError
 end
 
 require 'spec/rake/spectask'
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
-end
 
 Spec::Rake::SpecTask.new(:rcov) do |spec|
   spec.libs << 'lib' << 'spec'
@@ -31,7 +27,17 @@ Spec::Rake::SpecTask.new(:rcov) do |spec|
   spec.rcov = true
 end
 
-task :spec => :check_dependencies
+Spec::Rake::SpecTask.new('spec:unit') do |spec|
+  spec.libs << 'lib' << 'spec'
+  spec.spec_files = FileList['spec/unit/**/*_spec.rb']
+end
+
+Spec::Rake::SpecTask.new('spec:functionals') do |spec|
+  spec.libs << 'lib' << 'spec'
+  spec.spec_files = FileList['spec/functional/**/*_spec.rb']
+end
+
+task :spec => [:check_dependencies, 'spec:unit', 'spec:functionals']
 
 task :default => :spec
 

@@ -1,0 +1,1 @@
+MongoMapper.connection = nil
