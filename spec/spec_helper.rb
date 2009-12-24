@@ -12,7 +12,7 @@ require 'spec/autorun'
 
 TEST_DIR = File.expand_path(File.dirname(__FILE__) + '/../tmp')
 
-FileUtils.mkdir_p(test_dir) unless File.exist?(TEST_DIR)
+FileUtils.mkdir_p(TEST_DIR) unless File.exist?(TEST_DIR)
 
 Spec::Runner.configure do |config|
   config.mock_with :mocha
