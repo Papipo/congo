@@ -29,11 +29,22 @@ module Congo
       if self.embedded?
         klass.send(:include, MongoMapper::EmbeddedDocument)
       else
-        klass.send(:include, MongoMapper::Document)
+        klass.send(:include, MongoMapper::Document)        
         klass.timestamps!
         set_collection_name(klass)
         apply_scope(klass)
       end
+      
+      klass.class_eval <<-EOV
+        def content_type
+          @content_type ||= self.class.content_type
+        end
+        
+        def self.content_type
+          Congo::ContentType.find('#{self._id}')
+        end
+      EOV
+      
       apply_metadata(klass)
       apply_migration(klass)
       klass

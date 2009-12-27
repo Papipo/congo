@@ -2,7 +2,6 @@ module Congo
   module List
     
     def self.included(model)
-      puts '...including list'
       model.class_eval do
         include InstanceMethods
         

@@ -16,15 +16,20 @@ module Congo
       before_validation { self.send(:normalize_name) } # TODO: before_validation :normalize_name does not seem to work
         
       def apply(klass, scope)
-        ctype = scope.content_type_as_const(type)
-        klass.key name.to_sym, ctype
-        klass.include_errors_from name.to_sym if ctype.instance_methods.include?('valid?')
+        if type == 'File'          
+          klass.send(:include, Congo::Grip) unless klass.include?(Congo::Grip) # do not add the module twice
+          klass.has_grid_attachment name.to_sym, :path => "fs/:name/:id"
+        else
+          ctype = scope.content_type_as_const(type)
+          klass.key name.to_sym, ctype
+          klass.include_errors_from name.to_sym if ctype.instance_methods.include?('valid?')          
+        end
       end
       
       private
       
       def normalize_name
-        # FIXME: find something more robust to convert label to name
+        # TODO: find something more robust to convert label to name
         self.name = self.label.underscore.gsub(' ', '_') if self.name.blank? && self.label
         self.name.downcase! if self.name
         

@@ -36,10 +36,6 @@ module Congo
           def migrate!
             content_type.send(:migrate!, self)
           end
-
-          def content_type
-            @content_type ||= Congo::ContentType.find('#{self._id}')
-          end
         EOV
       end
       
