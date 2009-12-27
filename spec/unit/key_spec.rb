@@ -30,19 +30,6 @@ describe 'Key' do
     key.name.should == "title"
   end
   
-  it 'should keep the previous name and tell if the name changed or not' do
-    key = Congo::Metadata::Key.new(:name => 'Title')
-    key.name = 'foo'
-    key.name.should == 'foo'
-    key.name_changed?.should be_true
-    key.name = 'foo'
-    key.name_changed?.should be_false
-    key.attributes = { :name => 'bar' }
-    key.name_changed?.should be_true
-    key.attributes = { :name => 'bar' }
-    key.name_changed?.should be_false
-  end
-  
   describe "when applied" do
     after do
       @key.apply(@base, @scope)

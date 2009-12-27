@@ -7,3 +7,8 @@ en:
         empty: "can't be empty"
         taken: "has already been taken"
         exclusion: "is reserved"
+        inclusion: "is not included in the list"
+        confirmation: "doesn't match confirmation"
+        accepted: "must be accepted"
+        wrong_length: "is the wrong length"
+        not_a_number: "is not a number"        

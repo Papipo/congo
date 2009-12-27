@@ -13,25 +13,21 @@ module Congo
         :message => lambda { I18n.t('congo.errors.messages.empty') }
     
       ## callbacks
-      before_validation do
-        # FIXME: find something more robust to convert label to name
-        self.name = self.label.underscore.gsub(' ', '_') if self.name.blank? && self.label
-        self.name.downcase! if self.name
-      end
+      before_validation { self.send(:normalize_name) } # TODO: before_validation :normalize_name does not seem to work
         
       def apply(klass, scope)
         ctype = scope.content_type_as_const(type)
         klass.key name.to_sym, ctype
         klass.include_errors_from name.to_sym if ctype.instance_methods.include?('valid?')
       end
-
-      def name=(value)
-        @previous_name = self.name
-        super
-      end
-    
-      def name_changed?
-        @previous_name != self.name
+      
+      private
+      
+      def normalize_name
+        # FIXME: find something more robust to convert label to name
+        self.name = self.label.underscore.gsub(' ', '_') if self.name.blank? && self.label
+        self.name.downcase! if self.name
+        
       end
 
     end

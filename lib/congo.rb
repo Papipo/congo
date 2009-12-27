@@ -3,6 +3,7 @@ $:.unshift File.expand_path(File.dirname(__FILE__))
 require 'congo/support'
 require 'congo/migration'
 require 'congo/validation'
+require 'congo/list'
 require 'congo/metadata/key'
 require 'congo/metadata/association'
 require 'congo/metadata/validation'

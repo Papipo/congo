@@ -86,6 +86,11 @@ module Congo
           current, previous = metadata_keys.find(key_id), metadata_keys.previous.detect { |k| k['_id'] == key_id }
           if previous['name'] != current['name']
             migration.tasks << { :action => 'rename', :previous => previous['name'], :next => current['name'] }
+            
+            # check for validation
+            metadata_validations.each do |validation|
+              validation.key = current['name'] if validation.key == previous['name']
+            end
           end
         end
 
@@ -94,7 +99,7 @@ module Congo
           previous = metadata_keys.previous.detect { |k| k['_id'] == key_id }
           migration.tasks << { :action => 'drop', :previous => previous['name'] }
         end
-
+        
         unless migration.empty?
           self.version += 1
           self.migrations << migration

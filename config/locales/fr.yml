@@ -7,3 +7,8 @@ fr:
         empty: "doit être rempli(e)"
         taken: "n'est pas disponible"
         exclusion: "n'est pas disponible"
+        inclusion: "n'est pas inclus(e) dans la liste"
+        confirmation: "ne concorde pas avec la confirmation"
+        accepted: "doit être accepté(e)"
+        wrong_length: "ne fait pas la bonne longueur"
+        not_a_number: "n'est pas un nombre"
