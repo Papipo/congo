@@ -1,5 +1,9 @@
 fr:
   congo:
+    date:
+      formats:
+        default: "%d/%m/%Y"
+    
     errors:
       messages:
         invalid_keys: "ne sont pas valides"

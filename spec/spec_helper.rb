@@ -14,6 +14,10 @@ TEST_DIR = File.expand_path(File.dirname(__FILE__) + '/../tmp')
 
 FileUtils.mkdir_p(TEST_DIR) unless File.exist?(TEST_DIR)
 
+
+I18n.load_path << Dir[File.join(File.dirname(__FILE__), '..', 'config', 'locales', '*.{rb,yml}') ] 
+I18n.default_locale = :en
+
 Spec::Runner.configure do |config|
   config.mock_with :mocha
 end

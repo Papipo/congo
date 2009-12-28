@@ -1,4 +1,16 @@
-class Website
+class WebsiteParent
+  
+  def method_missing(method, *args)
+    if method.to_s == 'foo?'
+      "Hello foo !" 
+    else
+      super
+    end
+  end
+  
+end
+
+class Website < WebsiteParent
   
   acts_as_congo_scoper
   
@@ -12,13 +24,6 @@ class Website
     []
   end
   
-  def method_missing(method, *args)
-    if method.to_s == 'foo'
-      "Hello foo !" 
-    else
-      super
-    end
-  end
 end
 
 class Account 

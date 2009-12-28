@@ -49,6 +49,7 @@ module Congo
       end
             
       def content_type_as_const(name, method_name = nil)
+        return nil if (Congo::Types.const_defined?(name) rescue nil).nil?
         return Congo::Types.const_get(name) if Congo::Types.const_defined?(name)
         return name.constantize if Object.const_defined?(name)
         
@@ -73,7 +74,6 @@ module Congo
           super
         end
       end
-      
     end
   end
 end

@@ -29,7 +29,7 @@ module Congo
       if self.embedded?
         klass.send(:include, MongoMapper::EmbeddedDocument)
       else
-        klass.send(:include, MongoMapper::Document)        
+        klass.send(:include, MongoMapper::Document)
         klass.timestamps!
         set_collection_name(klass)
         apply_scope(klass)

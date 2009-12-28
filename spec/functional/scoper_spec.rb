@@ -8,7 +8,6 @@ describe 'Scoper' do
   end
   
   it 'should be used inside any AR models' do
-    
     website = Website.new(42, 'My simple website')
     website.id.should == 42
     lambda {
@@ -34,7 +33,7 @@ describe 'Scoper' do
   
   it 'should not break method_missing stuff from the scoper' do
     website = Website.new(42, 'My simple website')
-    website.foo.should == 'Hello foo !'
+    website.foo?.should == 'Hello foo !'
     lambda {
       website.bar
     }.should raise_error

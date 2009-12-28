@@ -84,7 +84,7 @@ describe 'ContentType' do
     @account = Account.first # we need a hard refresh :-)    
     project = @account.projects.first
     project.title.should == 'Project #1'
-    project.version.should == 1
+    project._version.should == 1
     lambda { project.name }.should_not raise_error
     lambda { project.date }.should raise_error
     
@@ -111,7 +111,7 @@ describe 'ContentType' do
     @account = Account.first # we need a hard refresh :-)    
     project = @account.projects.first # two pending migrations
         
-    project.version.should == 2
+    project._version.should == 2
     project.name.should == 'Project #1'
     lambda { project.title }.should raise_error
     lambda { project.description }.should raise_error

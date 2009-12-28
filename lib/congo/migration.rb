@@ -18,19 +18,19 @@ module Congo
       private
       
       def apply_migration(klass)
-        klass.key :version, Integer, :default => version
+        klass.key :_version, Integer, :default => version
         
         klass.class_eval <<-EOV
           def initialize_with_version(attrs={})
             initialize_without_version(attrs)
-            self.version = content_type.version unless attrs['version']
+            self._version = content_type.version unless attrs['_version']
             self.migrate!
           end
           
           alias_method_chain :initialize, :version
         
           def out_dated?
-            self.version < content_type.version
+            self._version < content_type.version
           end
         
           def migrate!
@@ -45,7 +45,7 @@ module Congo
         doc = content.class.collection.find({ '_id' => content._id }).first
         
         migrations.each do |migration|
-          if doc['version'] < migration.version            
+          if doc['_version'] < migration.version
             # logger.debug "running migration #{migration.version} / #{migration.inspect}"
             
             migration.tasks.each do |task|
@@ -61,7 +61,7 @@ module Congo
                   # unknown action
               end
             end
-            doc['version'] = migration.version
+            doc['_version'] = migration.version
             # logger.debug "finishing migration (#{content.version}) / #{doc.inspect}"
           end
         end
