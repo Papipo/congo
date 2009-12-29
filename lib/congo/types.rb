@@ -1,5 +1,6 @@
 module Congo
   module Types
+  
     class Email < String
       alias_method :email, :to_s
       include Validatable
@@ -20,7 +21,26 @@ module Congo
     class Text < String
     end
     
-    class Date < ::Date
+    class Date < Date
+      
+      def self.apply(klass, scope, name)
+        klass.class_eval <<-EOV
+          
+          def localized_#{name}
+            if self.#{name}
+              self.#{name}.strftime(I18n.t('congo.date.formats.default'))
+            else
+              nil
+            end
+          end
+          
+          def localized_#{name}=(value)
+            self.#{name} = value
+          end
+          
+        EOV
+      end
+      
       def self.to_mongo(value)
         date = self.parse_with_i18n(value.to_s)
         Time.utc(date[:year], date[:mon], date[:mday])

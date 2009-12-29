@@ -52,6 +52,13 @@ describe 'Key' do
     @account = Account.first # hard reload
     person = @account.developers.first
     person.birthday.strftime(I18n.t('congo.date.formats.default')).should == '16/09/1982'
+    person.localized_birthday.should == '16/09/1982'
+    
+    person.localized_birthday = '29/06/2007'
+    person.save
+    @account = Account.first # hard reload
+    person = @account.developers.first
+    person.localized_birthday.should == '29/06/2007'
   end
   
   def create_content_type(options = {})
