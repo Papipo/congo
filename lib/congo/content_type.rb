@@ -21,6 +21,8 @@ module Congo
     
     ## callbacks
     before_validation :make_names_clean
+    before_destroy :destroy_contents
+    before_destroy :destroy_proxy_scoper
   
     ## methods 
     
@@ -53,7 +55,11 @@ module Congo
     private
             
     def set_collection_name(klass)
-      klass.set_collection_name "#{scope_type}_#{scope_id}_#{name.tableize}" # maybe just name.tableize is enough
+      klass.set_collection_name self.send(:mongodb_collection_name)
+    end
+    
+    def mongodb_collection_name
+      "#{scope_type}_#{scope_id}_#{name.tableize}" # maybe just name.tableize is enough
     end
   
     def apply_scope(klass)
@@ -71,11 +77,20 @@ module Congo
       end
     end
     
+    def destroy_contents
+      MongoMapper.database.collection(self.send(:mongodb_collection_name)).drop
+    end
+    
+    def destroy_proxy_scoper
+      self.scope.destroy if self.scope === Congo::ProxyScoper
+    end
+    
     def make_names_clean
       if self.collection_name
         self.collection_name = self.collection_name.strip.gsub(/\s+/, ' ')
         self.name = self.collection_name if self.name.blank?
       end
+      
       self.name = self.name.strip.classify.gsub(/\s+/, '_').camelize if self.name
       self.slug = slugify_name(self.collection_name) if self.collection_name
     end
