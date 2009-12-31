@@ -115,6 +115,27 @@ describe 'ContentType' do
     type.metadata_keys.size.should == 2
     Congo::ContentType.first.metadata_keys.size.should == 2
   end
+  
+  it 'should remove contents as well when removed' do
+    type = build_content_type
+    type.save!
+    @account.projects.create(:name => 'project #1', :description => 'bla bla')
+    collection_name = type.send(:mongodb_collection_name)
+    MongoMapper.database.collection(collection_name).count.should == 1
+    
+    another_type = build_content_type(:name => 'Foo')
+    another_type.save
+    
+    @account = @account.reload
+    @account.content_types.count.should == 2
+    
+    type.destroy
+    
+    @account = @account.reload
+    @account.content_types.count.should == 1
+    MongoMapper.database.collection(collection_name).count.should == 0
+    @account.foos.count.should == 0
+  end
         
   def build_content_type(options = {})
     default_options = {

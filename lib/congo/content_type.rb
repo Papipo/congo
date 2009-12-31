@@ -22,7 +22,6 @@ module Congo
     ## callbacks
     before_validation :make_names_clean
     before_destroy :destroy_contents
-    before_destroy :destroy_proxy_scoper
   
     ## methods 
     
@@ -79,10 +78,6 @@ module Congo
     
     def destroy_contents
       MongoMapper.database.collection(self.send(:mongodb_collection_name)).drop
-    end
-    
-    def destroy_proxy_scoper
-      self.scope.destroy if self.scope === Congo::ProxyScoper
     end
     
     def make_names_clean
