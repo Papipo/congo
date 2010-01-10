@@ -83,7 +83,7 @@ module Congo
           if previous['name'] != current['name']
             migration.tasks << { :action => 'rename', :previous => previous['name'], :next => current['name'] }
             
-            # check for validation
+            # check for potential validations relative to the modified key
             metadata_validations.each do |validation|
               validation.key = current['name'] if validation.key == previous['name']
             end
@@ -94,6 +94,9 @@ module Congo
         (previous_ids - current_ids).each do |key_id|
           previous = metadata_keys.previous.detect { |k| k['_id'] == key_id }
           migration.tasks << { :action => 'drop', :previous => previous['name'] }
+          
+          # check for potential validations relative to the dropped key
+          metadata_validations.delete_if { |v| v.key == previous['name'] }
         end
         
         unless migration.empty?

@@ -133,6 +133,20 @@ describe 'ContentType' do
     @content_type.metadata_validations.first.key.should == 'title'
   end
   
+  it 'should update validation if key is droppped' do
+    @account.projects.create(:name => 'Project #1', :description => 'bla bla', :date => '10/09/2009')
+    
+    @content_type.metadata_validations = [{ :key => 'description', :type => 'presence_of' }]
+    @content_type.save
+    
+    new_keys = [@content_type.metadata_keys.first, @content_type.metadata_keys.last]
+    @content_type.metadata_keys = new_keys
+    @content_type.save
+    
+    @content_type = Congo::ContentType.first # hard refresh
+    @content_type.metadata_validations.should be_empty
+  end
+  
   def build_content_type(options = {})
     default_options = {
       :name => 'Task', 

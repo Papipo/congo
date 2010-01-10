@@ -22,6 +22,8 @@ module Congo
     ## callbacks
     before_validation :make_names_clean
     before_destroy :destroy_contents
+    
+    # TODO: add callback to check if validations are still valid (for instance, a dropped key should not still have its validations)
   
     ## methods 
     

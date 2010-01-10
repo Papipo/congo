@@ -17,8 +17,8 @@ module Congo
         
       def apply(klass, scope)
         if type == 'File'
-          klass.send(:include, Congo::Grip) unless klass.include?(Congo::Grip) # do not add the module twice
-          klass.has_grid_attachment name.to_sym, :path => "fs/:name/:id"
+          klass.send(:include, Congo::Grip::HasAttachment) unless klass.include?(Congo::Grip::HasAttachment) # do not add the module twice
+          klass.has_grid_attachment name.to_sym, :path => ":name/:id"
         else
           ctype = scope.content_type_as_const(type)
           klass.key name.to_sym, ctype
@@ -33,7 +33,6 @@ module Congo
         # TODO: find something more robust to convert label to name
         self.name = self.label.underscore.gsub(' ', '_') if self.name.blank? && self.label
         self.name.downcase! if self.name
-        
       end
 
     end

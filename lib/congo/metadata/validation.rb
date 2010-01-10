@@ -5,16 +5,22 @@ module Congo
   
       key :type, String
       key :key, String
+      key :argument, String
   
       validates_presence_of :key, 
         :message => lambda { I18n.t('congo.errors.messages.empty') }
         
       validates_inclusion_of :type, 
-        :within => methods.grep(/^validates_/),
+        :within => methods.grep(/^validates_/).map { |m| m.gsub(/^validates_/, '') },
         :message => lambda { I18n.t('congo.errors.messages.inclusion') }
   
       def apply(klass, scope)
-        klass.send("validates_#{type}", key, :message => type_to_i18n)
+        options = { :message => type_to_i18n }
+        case self.type
+        when 'format_of'
+          options.merge! :with => /#{self.argument}/
+        end        
+        klass.send("validates_#{type}", key, options)
       end
       
       protected
