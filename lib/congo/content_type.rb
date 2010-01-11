@@ -84,7 +84,7 @@ module Congo
     
     def make_names_clean
       if self.collection_name
-        self.collection_name = self.collection_name.strip.gsub(/\s+/, ' ')
+        self.collection_name = self.collection_name.gsub(/[\s\W]+/, ' ').strip
         self.name = self.collection_name if self.name.blank?
       end
       
