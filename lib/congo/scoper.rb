@@ -72,7 +72,7 @@ module Congo
           (proxy_scoper? ? scoper_instance : self).send(method, *args)
         else
           super
-        end
+        end        
       end
     end
   end

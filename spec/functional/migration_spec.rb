@@ -80,13 +80,18 @@ describe 'ContentType' do
     new_keys.first.name = 'title'
     @content_type.metadata_keys = new_keys
     @content_type.save
-  
-    @account = Account.first # we need a hard refresh :-)    
+    
+    @content_type.reload
+    @account = Account.first # we need a hard refresh :-)
+    
     project = @account.projects.first
     project.title.should == 'Project #1'
     project._version.should == 1
     lambda { project.name }.should_not raise_error
     lambda { project.date }.should raise_error
+    
+    @account = Account.first # we need a hard refresh :-)
+    @account.associations[:projects].instance_variable_set "@klass", @account.content_types.first.to_const
     
     another_project = @account.projects.create!(:title => 'Project #2', :description => 'bla bla')
     lambda { another_project.name }.should raise_error

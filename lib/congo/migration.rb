@@ -21,9 +21,9 @@ module Congo
         klass.key :_version, Integer, :default => version
         
         klass.class_eval <<-EOV
-          def initialize_with_version(attrs={})
-            initialize_without_version(attrs)
-            self._version = content_type.version unless attrs['_version']
+          def initialize_with_version(attrs={}, from_database = false)
+            initialize_without_version(attrs, from_database)
+                        
             self.migrate!
           end
           
@@ -36,6 +36,21 @@ module Congo
           def migrate!
             content_type.send(:migrate!, self)
           end
+          
+          protected
+          
+          def rename_key(old_key_name, new_key_name)
+            @_mongo_doc ||= self.class.collection.find({ '_id' => self._id }).first
+            @_mongo_doc[new_key_name] = @_mongo_doc[old_key_name]
+            
+            @_mongo_doc.delete(old_key_name)
+          end
+          
+          def drop_key(key_name)
+            @_mongo_doc ||= self.class.collection.find({ '_id' => self._id }).first
+            @_mongo_doc.delete(key_name)
+            self.send(:keys).delete(key_name) rescue nil
+          end
         EOV
       end
       
@@ -43,6 +58,7 @@ module Congo
         return false unless content.out_dated?
         
         doc = content.class.collection.find({ '_id' => content._id }).first
+        content.instance_variable_set '@_mongo_doc', doc
         
         migrations.each do |migration|
           if doc['_version'] < migration.version
@@ -50,23 +66,24 @@ module Congo
             
             migration.tasks.each do |task|
               # logger.debug "...running task #{task['action']}"
+              
               case task['action'].to_sym
                 when :rename
-                  doc[task['next']] = doc[task['previous']]
-                  doc.delete(task['previous'])
+                  content.send(:rename_key, task['previous'], task['next'])
                 when :drop
-                  doc.delete(task['previous'])
-                  content.send(:_keys).delete(task['previous']) rescue nil
+                  content.send(:drop_key, task['previous'])
                 else
                   # unknown action
               end
             end
             doc['_version'] = migration.version
             # logger.debug "finishing migration (#{content.version}) / #{doc.inspect}"
+            # puts "finishing migration (#{migration.version}) / #{doc.inspect}"
           end
         end
         content.class.collection.save(doc)
-        content = content.reload
+                
+        content.attributes = doc
       end
       
       def increment_version_and_build_migration
