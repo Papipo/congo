@@ -47,6 +47,7 @@ module Congo
       
       # Patch from http://gist.github.com/179712
       def self.parse_with_i18n(str)
+        format ||= :default
         date = ::Date._strptime(str, I18n.t('congo.date.formats.default')) || self._parse(str)
         date[:year] += self.increment_year(date[:year].to_i) if date[:year]
         date
