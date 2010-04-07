@@ -13,7 +13,7 @@ module Congo
         :message => lambda { I18n.t('congo.errors.messages.empty') }
     
       ## callbacks
-      before_validation { self.send(:normalize_name) } # TODO: before_validation :normalize_name does not seem to work
+      before_validation { |c| c.send(:normalize_name) }
         
       def apply(klass, scope)
         if type == 'File'

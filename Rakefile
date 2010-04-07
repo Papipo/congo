@@ -5,13 +5,12 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "congo"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
-    gem.email = "papipo@gmail.com"
+    gem.summary = %Q{Library to define flexible schemas for mongodb documents. }
+    gem.email = ["papipo@gmail.com", "didier@nocoffee.fr"]
     gem.homepage = "http://github.com/Papipo/congo"
     gem.authors = ["Rodrigo Alvarez", "Didier Lafforgue"]
     gem.add_development_dependency "rspec", ">= 1.2.9"
-    gem.add_development_dependency "mongo_mapper", ">= 0.6.7"
+    gem.add_development_dependency "mongo_mapper", ">= 0.7.2"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
